@@ -81,7 +81,9 @@ public class SimpleScoreboard implements Scoreboard {
             team.unregister();
         }
         // Stop updating
-        updateTask.cancel();
+        if(updateTask != null){
+            updateTask.cancel();
+        }
     }
 
     @Override
