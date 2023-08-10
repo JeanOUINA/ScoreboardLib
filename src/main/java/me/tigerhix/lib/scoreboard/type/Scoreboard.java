@@ -62,4 +62,8 @@ public interface Scoreboard {
      */
     Player getHolder();
 
+    /**
+     * Trigger an update
+     */
+    void update();
 }
