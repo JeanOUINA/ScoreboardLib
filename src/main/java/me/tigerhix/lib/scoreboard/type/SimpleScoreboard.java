@@ -29,14 +29,14 @@ public class SimpleScoreboard implements Scoreboard {
     private final Objective objective;
 
     protected Player holder;
-    protected long updateInterval = 10L;
+    protected long updateInterval = 0L;
 
     private boolean activated;
     private ScoreboardHandler handler;
     private Map<FakePlayer, Integer> entryCache = new ConcurrentHashMap<>();
     private Table<String, Integer, FakePlayer> playerCache = HashBasedTable.create();
     private Table<Team, String, String> teamCache = HashBasedTable.create();
-    private BukkitRunnable updateTask;
+    private BukkitRunnable updateTask = null;
 
     public SimpleScoreboard(Player holder) {
         this.holder = holder;
@@ -53,14 +53,17 @@ public class SimpleScoreboard implements Scoreboard {
         activated = true;
         // Set to the custom scoreboard
         holder.setScoreboard(scoreboard);
-        // And start updating on a desired interval
-        updateTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                update();
-            }
-        };
-        updateTask.runTaskTimer(ScoreboardLib.getPluginInstance(), 0, updateInterval);
+        if(updateInterval != 0){
+            // And start updating on a desired interval
+            updateTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    update();
+                }
+            };
+            updateTask.runTaskTimer(ScoreboardLib.getPluginInstance(), updateInterval, updateInterval);
+        }
+        update();
     }
 
     @Override
@@ -115,7 +118,7 @@ public class SimpleScoreboard implements Scoreboard {
     }
 
     @SuppressWarnings("deprecation")
-    private void update() {
+    public void update() {
         if (!holder.isOnline()) {
             deactivate();
             return;
